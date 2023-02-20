@@ -15,7 +15,7 @@ void pushGPGGA(NMEA_GGA_data_t nmeaData)
     Serial.print((const char *)nmeaData.nmea); // .nmea is printable (NULL-terminated) and already has \r\n on the end
 
     //Push our current GGA sentence to caster
-    mySARA.socketWrite(socketNum, (const char *)nmeaData.nmea);
+    myLARA.socketWrite(socketNum, (const char *)nmeaData.nmea);
   }
 }
 

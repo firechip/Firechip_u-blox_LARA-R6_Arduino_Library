@@ -15,7 +15,7 @@ volatile bool httpResultSeen = false; // Flag to indicate that the HTTP URC was 
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-// processHTTPcommandResult is provided to the SARA-R5 library via a 
+// processHTTPcommandResult is provided to the LARA-R6 library via a 
 // callback setter -- setHTTPCommandCallback. (See the end of setup())
 void processHTTPcommandResult(int profile, int command, int result)
 {
@@ -35,7 +35,7 @@ void processHTTPcommandResult(int profile, int command, int result)
   // Get and print the most recent HTTP protocol error
   int error_class;
   int error_code;
-  mySARA.getHTTPprotocolError(0, &error_class, &error_code);
+  myLARA.getHTTPprotocolError(0, &error_class, &error_code);
   Serial.print(F("Most recent HTTP protocol error:  class: "));
   Serial.print(error_class);
   Serial.print(F("  code: "));
@@ -51,7 +51,7 @@ void processHTTPcommandResult(int profile, int command, int result)
 
 bool getAssistNowOnlineData(String theFilename)
 {
-  // Use HTTP GET to receive the AssistNow_Online data. Store it in the SARA-R5's internal file system.
+  // Use HTTP GET to receive the AssistNow_Online data. Store it in the LARA-R6's internal file system.
 
   String theServer = assistNowServer; // Convert the AssistNow server to String
 
@@ -78,28 +78,28 @@ bool getAssistNowOnlineData(String theFilename)
   Serial.println(theFilename);
 
   // Reset HTTP profile 0
-  mySARA.resetHTTPprofile(0);
+  myLARA.resetHTTPprofile(0);
   
   // Set the server name
-  mySARA.setHTTPserverName(0, theServer);
+  myLARA.setHTTPserverName(0, theServer);
   
   // Use HTTPS
-  mySARA.setHTTPsecure(0, false); // Setting this to true causes the GET to fail. Maybe due to the default CMNG profile?
+  myLARA.setHTTPsecure(0, false); // Setting this to true causes the GET to fail. Maybe due to the default CMNG profile?
 
   // Set a callback to process the HTTP command result
-  mySARA.setHTTPCommandCallback(&processHTTPcommandResult);
+  myLARA.setHTTPCommandCallback(&processHTTPcommandResult);
 
   httpResultSeen = false; // Clear the flag
 
   // HTTP GET
-  mySARA.sendHTTPGET(0, theRequestStr, theFilename);
+  myLARA.sendHTTPGET(0, theRequestStr, theFilename);
 
-  // Wait for 20 seconds while calling mySARA.bufferedPoll() to see the HTTP result.
+  // Wait for 20 seconds while calling myLARA.bufferedPoll() to see the HTTP result.
   Serial.print(F("getAssistNowOnlineData: Waiting up to 20 seconds for the HTTP Result"));
   int i = 0;
   while ((i < 20000) && (httpResultSeen == false))
   {
-    mySARA.bufferedPoll(); // Keep processing data from the SARA so we can catch the HTTP command result
+    myLARA.bufferedPoll(); // Keep processing data from the LARA so we can catch the HTTP command result
     i++;
     delay(1);
     if (i % 1000 == 0)
@@ -114,7 +114,7 @@ bool getAssistNowOnlineData(String theFilename)
   }
 
   int fileSize;
-  if (mySARA.getFileSize(theFilename, &fileSize) != SARA_R5_SUCCESS)
+  if (myLARA.getFileSize(theFilename, &fileSize) != LARA_R6_SUCCESS)
   {
     Serial.print(F("getAssistNowOnlineData: No file written?!"));
     return false;    

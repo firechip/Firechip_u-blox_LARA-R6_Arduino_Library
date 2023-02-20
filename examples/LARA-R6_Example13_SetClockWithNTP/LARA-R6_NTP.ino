@@ -43,7 +43,7 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
 
   //Allocate a UDP socket to talk to the NTP server
 
-  int socketNum = mySARA.socketOpen(SARA_R5_UDP);
+  int socketNum = myLARA.socketOpen(LARA_R6_UDP);
   if (socketNum == -1)
   {
     Serial.println(F("getNTPTime: socketOpen failed!"));
@@ -57,10 +57,10 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
 
   // Send the request - NTP uses UDP
   
-  if (mySARA.socketWriteUDP(socketNum, ntpServer, serverPort, (const char *)&packetBuffer, NTP_PACKET_SIZE) != SARA_R5_SUCCESS) // Send the request
+  if (myLARA.socketWriteUDP(socketNum, ntpServer, serverPort, (const char *)&packetBuffer, NTP_PACKET_SIZE) != LARA_R6_SUCCESS) // Send the request
   {
     Serial.println(F("getNTPTime: socketWrite failed!"));
-    mySARA.socketClose(socketNum); // Be nice. Close the socket
+    myLARA.socketClose(socketNum); // Be nice. Close the socket
     return (false);    
   }
 
@@ -74,10 +74,10 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
     // We could use the Socket Read Callback to get the data, but, just for giggles,
     // and to prove it works, let's poll the arrival of the data manually...
     int avail = 0;
-    if (mySARA.socketReadAvailableUDP(socketNum, &avail) != SARA_R5_SUCCESS)
+    if (myLARA.socketReadAvailableUDP(socketNum, &avail) != LARA_R6_SUCCESS)
     {
       Serial.println(F("getNTPTime: socketReadAvailable failed!"));
-      mySARA.socketClose(socketNum); // Be nice. Close the socket
+      myLARA.socketClose(socketNum); // Be nice. Close the socket
       return (false);
     }
 
@@ -92,10 +92,10 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
         Serial.println(F(" bytes..."));
       }
       
-      if (mySARA.socketReadUDP(socketNum, NTP_PACKET_SIZE, (char *)&packetBuffer) != SARA_R5_SUCCESS)
+      if (myLARA.socketReadUDP(socketNum, NTP_PACKET_SIZE, (char *)&packetBuffer) != LARA_R6_SUCCESS)
       {
         Serial.println(F("getNTPTime: socketRead failed!"));
-        mySARA.socketClose(socketNum); // Be nice. Close the socket
+        myLARA.socketClose(socketNum); // Be nice. Close the socket
         return (false);
       }
       
@@ -161,7 +161,7 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
       if (*s < 10) Serial.print(F("0"));
       Serial.println(*s);
 
-      mySARA.socketClose(socketNum); // Be nice. Close the socket
+      myLARA.socketClose(socketNum); // Be nice. Close the socket
       return (true); // We are done!
     }
     
@@ -171,6 +171,6 @@ bool getNTPTime(uint8_t *y, uint8_t *mo, uint8_t *d, uint8_t *h, uint8_t *min, u
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   Serial.println(F("getNTPTime: no NTP data received!"));
-  mySARA.socketClose(socketNum); // Be nice. Close the socket
+  myLARA.socketClose(socketNum); // Be nice. Close the socket
   return (false);
 }

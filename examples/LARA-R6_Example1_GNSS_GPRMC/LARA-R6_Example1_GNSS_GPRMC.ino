@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   GNSS GPRMC
@@ -8,37 +8,37 @@
   Written by: Paul Clark
   Date: November 18th 2020
 
-  This example enables the SARA-R5nnM8S' built-in GNSS receiver and reads the GPRMC message to
+  This example enables the LARA-R6nnM8S' built-in GNSS receiver and reads the GPRMC message to
   get position, speed and time data.
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
 PositionData gps;
 SpeedData spd;
@@ -53,7 +53,7 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
+  Serial.println(F("LARA-R6 Example"));
   Serial.println(F("Press any key to begin GNSS'ing"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
@@ -61,23 +61,23 @@ void setup()
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 9600) ) {
-    Serial.println(F("SARA-R5 connected!"));
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 9600) ) {
+    Serial.println(F("LARA-R6 connected!"));
   }
 
   // Enable power for the GNSS active antenna
-  // On the MicroMod Asset Tracker, the SARA GPIO2 pin is used to control power for the antenna.
+  // On the MicroMod Asset Tracker, the LARA GPIO2 pin is used to control power for the antenna.
   // We need to pull GPIO2 (Pin 23) high to enable the power.
-  mySARA.setGpioMode(mySARA.GPIO2, mySARA.GPIO_OUTPUT, 1);
+  myLARA.setGpioMode(myLARA.GPIO2, myLARA.GPIO_OUTPUT, 1);
 
-  // From the u-blox SARA-R5 Positioning Implementation Application Note UBX-20012413 - R01
+  // From the u-blox LARA-R6 Positioning Implementation Application Note UBX-20012413 - R01
   // To enable the PPS output we need to:
   // Configure GPIO6 for TIME_PULSE_OUTPUT - .init does this
   // Enable the timing information request with +UTIMEIND=1 - setUtimeIndication()
@@ -88,25 +88,25 @@ void setup()
   //   +UTIME=1,1 only works when the GNSS module if off. It returns an ERROR if the GNSS is already on.
 
   // Enable the timing information request (URC)
-  //mySARA.setUtimeIndication(); // Use default (SARA_R5_UTIME_URC_CONFIGURATION_ENABLED)
+  //myLARA.setUtimeIndication(); // Use default (LARA_R6_UTIME_URC_CONFIGURATION_ENABLED)
   
   // Clear the time offset
-  mySARA.setUtimeConfiguration(); // Use default offset (offsetNanoseconds = 0, offsetSeconds = 0)
+  myLARA.setUtimeConfiguration(); // Use default offset (offsetNanoseconds = 0, offsetSeconds = 0)
   
   // Set the UTIME mode to pulse-per-second output using a best effort from GNSS and LTE
-  mySARA.setUtimeMode(); // Use defaults (mode = SARA_R5_UTIME_MODE_PPS, sensor = SARA_R5_UTIME_SENSOR_GNSS_LTE)
+  myLARA.setUtimeMode(); // Use defaults (mode = LARA_R6_UTIME_MODE_PPS, sensor = LARA_R6_UTIME_SENSOR_GNSS_LTE)
 
-  mySARA.gpsEnableRmc(); // Enable GPRMC messages
+  myLARA.gpsEnableRmc(); // Enable GPRMC messages
 }
 
 void loop()
 {
   if ((lastGpsPoll == 0) || (lastGpsPoll + GPS_POLL_RATE < millis()))
   {
-    // Call (mySARA.gpsGetRmc to get coordinate, speed, and timing data
+    // Call (myLARA.gpsGetRmc to get coordinate, speed, and timing data
     // from the GPS module. Valid can be used to check if the GPS is
     // reporting valid data
-    if (mySARA.gpsGetRmc(&gps, &spd, &clk, &valid) == SARA_R5_SUCCESS)
+    if (myLARA.gpsGetRmc(&gps, &spd, &clk, &valid) == LARA_R6_SUCCESS)
     {
       printGPS();
       lastGpsPoll = millis();

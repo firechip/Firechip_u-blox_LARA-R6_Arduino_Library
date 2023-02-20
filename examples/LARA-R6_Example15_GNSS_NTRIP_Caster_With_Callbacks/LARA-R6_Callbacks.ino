@@ -1,6 +1,6 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketData is provided to the SARA-R5 library via a 
+// processSocketData is provided to the LARA-R6 library via a 
 // callback setter -- setSocketReadCallbackPlus. (See setup())
 void processSocketData(int socket, const char *theData, int dataLength, IPAddress remoteAddress, int remotePort)
 {
@@ -24,10 +24,10 @@ void processSocketData(int socket, const char *theData, int dataLength, IPAddres
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketClose is provided to the SARA-R5 library via a 
+// processSocketClose is provided to the LARA-R6 library via a 
 // callback setter -- setSocketCloseCallback. (See setup())
 // 
-// Note: the SARA-R5 only sends a +UUSOCL URC when the socket is closed by the remote
+// Note: the LARA-R6 only sends a +UUSOCL URC when the socket is closed by the remote
 void processSocketClose(int socket)
 {
   Serial.print(F("processSocketClose: Socket "));
@@ -43,7 +43,7 @@ void processSocketClose(int socket)
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processPSDAction is provided to the SARA-R5 library via a 
+// processPSDAction is provided to the LARA-R6 library via a 
 // callback setter -- setPSDActionCallback. (See setup())
 void processPSDAction(int result, IPAddress ip)
 {

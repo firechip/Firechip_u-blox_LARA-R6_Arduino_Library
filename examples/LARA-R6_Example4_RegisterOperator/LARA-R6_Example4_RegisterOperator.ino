@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   Register Operator
@@ -8,36 +8,36 @@
   Written by: Paul Clark
   Date: November 18th 2020
 
-  This example demonstrates how to register the SARA with a network operator.
+  This example demonstrates how to register the LARA with a network operator.
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
 // Map registration status messages to more readable strings
 String registrationString[] =
@@ -71,7 +71,7 @@ String registrationString[] =
 // MNO_DT -- Deutsche Telekom
 // MNO_US_CELLULAR
 // MNO_SKT
-// MNO_GLOBAL -- SARA factory-programmed value
+// MNO_GLOBAL -- LARA factory-programmed value
 // MNO_STD_EUROPE
 // MNO_STD_EU_NOEPCO
 
@@ -142,7 +142,7 @@ int convertOperatorNumber( mobile_network_operator_t mno)
 // of MNO_SW_DEFAULT.
 #define MAX_OPERATORS 10
 
-// Uncomment this line if you want to be able to communicate directly with the SARA in the main loop
+// Uncomment this line if you want to be able to communicate directly with the LARA in the main loop
 //#define DEBUG_PASSTHROUGH_ENABLED
 
 void setup()
@@ -155,7 +155,7 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
+  Serial.println(F("LARA-R6 Example"));
   Serial.println(F("Press any key to begin"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
@@ -163,27 +163,27 @@ void setup()
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 9600) )
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 9600) )
   {
-    Serial.println(F("SARA-R5 connected!"));
+    Serial.println(F("LARA-R6 connected!"));
   }
   else
   {
-    Serial.println(F("Unable to communicate with the SARA."));
-    Serial.println(F("Manually power-on (hold the SARA On button for 3 seconds) on and try again."));
+    Serial.println(F("Unable to communicate with the LARA."));
+    Serial.println(F("Manually power-on (hold the LARA On button for 3 seconds) on and try again."));
     while (1) ; // Loop forever on fail
   }
   Serial.println();
 
   // First check to see if we're already connected to an operator:
-  if (mySARA.getOperator(&currentOperator) == SARA_R5_SUCCESS) {
+  if (myLARA.getOperator(&currentOperator) == LARA_R6_SUCCESS) {
     Serial.print(F("Already connected to: "));
     Serial.println(currentOperator);
     // If already connected provide the option to type y to connect to new operator
@@ -195,7 +195,7 @@ void setup()
     }
     else
     {
-      mySARA.deregisterOperator(); // Deregister from the current operator so we can connect to a new one
+      myLARA.deregisterOperator(); // Deregister from the current operator so we can connect to a new one
     }
     while (Serial.available()) Serial.read();
   }
@@ -204,7 +204,7 @@ void setup()
     // Set MNO to either Verizon, T-Mobile, AT&T, Telstra, etc.
     // This will narrow the operator options during our scan later
     Serial.println(F("Setting mobile-network operator"));
-    if (mySARA.setNetworkProfile(MOBILE_NETWORK_OPERATOR))
+    if (myLARA.setNetworkProfile(MOBILE_NETWORK_OPERATOR))
     {
       Serial.print(F("Set mobile network operator to "));
       Serial.println(MOBILE_NETWORK_STRINGS[convertOperatorNumber(MOBILE_NETWORK_OPERATOR)] + "\r\n");
@@ -220,9 +220,9 @@ void setup()
     serialWait();
 
     Serial.println(F("Scanning for networks...this may take up to 3 minutes\r\n"));
-    // mySARA.getOperators takes in a operator_stats struct pointer and max number of
+    // myLARA.getOperators takes in a operator_stats struct pointer and max number of
     // structs to scan for, then fills up those objects with operator names and numbers
-    opsAvailable = mySARA.getOperators(ops, MAX_OPERATORS); // This will block for up to 3 minutes
+    opsAvailable = myLARA.getOperators(ops, MAX_OPERATORS); // This will block for up to 3 minutes
 
     if (opsAvailable > 0)
     {
@@ -245,7 +245,7 @@ void setup()
           Serial.println("Connecting to option " + String(selection));
           if (selection == (opsAvailable + 1))
           {
-            if (mySARA.automaticOperatorSelection() == SARA_R5_SUCCESS)
+            if (myLARA.automaticOperatorSelection() == LARA_R6_SUCCESS)
             {
               Serial.println("Automatic operator selection: successful\r\n");
             }
@@ -256,7 +256,7 @@ void setup()
           }
           else
           {
-            if (mySARA.registerOperator(ops[selection - 1]) == SARA_R5_SUCCESS)
+            if (myLARA.registerOperator(ops[selection - 1]) == LARA_R6_SUCCESS)
             {
               Serial.println("Network " + ops[selection - 1].longOp + " registered\r\n");
             }
@@ -282,12 +282,12 @@ void setup()
 void loop()
 {
   // Loop provides a debugging interface.
-  if (saraSerial.available()) {
-    Serial.write((char) saraSerial.read());
+  if (laraSerial.available()) {
+    Serial.write((char) laraSerial.read());
   }
 #ifdef DEBUG_PASSTHROUGH_ENABLED
   if (Serial.available()) {
-    saraSerial.write((char) Serial.read());
+    laraSerial.write((char) Serial.read());
   }
 #endif
 }
@@ -299,11 +299,11 @@ void printInfo(void) {
 
   Serial.println(F("Connection info:"));
   Serial.println(F("Context ID:\tAPN Name:\tIP Address:"));
-  for (int cid = 0; cid < SARA_R5_NUM_PDP_CONTEXT_IDENTIFIERS; cid++)
+  for (int cid = 0; cid < LARA_R6_NUM_PDP_CONTEXT_IDENTIFIERS; cid++)
   {
     String apn = "";
     IPAddress ip(0, 0, 0, 0);
-    mySARA.getAPN(cid, &apn, &ip);
+    myLARA.getAPN(cid, &apn, &ip);
     if (apn.length() > 0)
     {
       Serial.print(cid);
@@ -315,14 +315,14 @@ void printInfo(void) {
   }
 
   // Operator name or number
-  if (mySARA.getOperator(&currentOperator) == SARA_R5_SUCCESS)
+  if (myLARA.getOperator(&currentOperator) == LARA_R6_SUCCESS)
   {
     Serial.print(F("Operator: "));
     Serial.println(currentOperator);
   }
 
   // Received signal strength
-  Serial.println("RSSI: " + String(mySARA.rssi()));
+  Serial.println("RSSI: " + String(myLARA.rssi()));
   Serial.println();
 }
 
@@ -349,7 +349,7 @@ void printOperators(struct operator_stats * ops, int operatorsAvailable)
     }
     switch (ops[i].act)
     {
-    // SARA-R5 only supports LTE
+    // LARA-R6 only supports LTE
     case 7:
       Serial.print(F(" - LTE"));
       break;

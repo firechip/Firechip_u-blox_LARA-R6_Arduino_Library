@@ -1,0 +1,191 @@
+{
+    "name": "FC0003390327",
+    "version": "1.0.0",
+    "description": "Library for the u-blox LARA-R6 LTE",
+    "keywords": "LARA-R6, LARA, LTE, Module, UART",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/firechip/Firechip_u-blox_LARA-R6_Arduino_Library.git"
+    },
+    "authors": [
+      {
+        "name": "Alexander Salas Bastidas",
+        "email": "ajsb85@firechip.dev",
+        "url": "https://firechip.dev"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://firechip.dev/",
+    "frameworks": "arduino",
+    "platforms": "*",
+    "headers": "FC0003390327.h",
+    "examples": [
+      {
+        "name": "GNSS_GPRMC",
+        "base": "examples/LARA-R6_Example1_GNSS_GPRMC",
+        "files": [
+          "LARA-R6_Example1_GNSS_GPRMC.ino"
+        ]
+      },
+      {
+        "name": "Identification",
+        "base": "examples/LARA-R6_Example2_Identification",
+        "files": [
+          "LARA-R6_Example2_Identification.ino"
+        ]
+      },
+      {
+        "name": "Identification_using_ESPSoftwareSerial",
+        "base": "examples/LARA-R6_Example2_Identification_ESPSoftwareSerial",
+        "files": [
+          "LARA-R6_Example2_Identification_ESPSoftwareSerial.ino"
+        ]
+      },
+      {
+        "name": "Network_Info",
+        "base": "examples/LARA-R6_Example3_NetworkInfo",
+        "files": [
+          "LARA-R6_Example3_NetworkInfo.ino"
+        ]
+      },
+      {
+        "name": "Register_Operator",
+        "base": "examples/LARA-R6_Example4_RegisterOperator",
+        "files": [
+          "LARA-R6_Example4_RegisterOperator.ino"
+        ]
+      },
+      {
+        "name": "Receive_SMS",
+        "base": "examples/LARA-R6_Example5_ReceiveSMS",
+        "files": [
+          "LARA-R6_Example5_ReceiveSMS.ino"
+        ]
+      },
+      {
+        "name": "Send_SMS",
+        "base": "examples/LARA-R6_Example6_SendSMS",
+        "files": [
+          "LARA-R6_Example6_SendSMS.ino"
+        ]
+      },
+      {
+        "name": "Configure_Packet_Switched_Data",
+        "base": "examples/LARA-R6_Example7_ConfigurePacketSwitchedData",
+        "files": [
+          "LARA-R6_Example7_ConfigurePacketSwitchedData.ino"
+        ]
+      },
+      {
+        "name": "Ping",
+        "base": "examples/LARA-R6_Example8_Ping",
+        "files": [
+          "LARA-R6_Example8_Ping.ino"
+        ]
+      },
+      {
+        "name": "ThingSpeak_HTTP_POST_GET",
+        "base": "examples/LARA-R6_Example9_ThingSpeak",
+        "files": [
+          "LARA-R6_Example9_ThingSpeak.ino"
+        ]
+      },
+      {
+        "name": "Socket_Ping_Pong_TCP_Data_Transfers",
+        "base": "examples/LARA-R6_Example10_SocketPingPong",
+        "files": [
+          "LARA-R6_Example10_SocketPingPong.ino"
+        ]
+      },
+      {
+        "name": "Socket_Ping_Pong_Binary_TCP_Data_Transfers",
+        "base": "examples/LARA-R6_Example10_SocketPingPong_BinaryTCP",
+        "files": [
+          "LARA-R6_Example10_SocketPingPong_BinaryTCP.ino"
+        ]
+      },
+      {
+        "name": "Socket_Ping_Pong_TCP_Data_Transfers_on_multiple_sockets",
+        "base": "examples/LARA-R6_Example10_SocketPingPong_MultipleTCP",
+        "files": [
+          "LARA-R6_Example10_SocketPingPong_MultipleTCP.ino"
+        ]
+      },
+      {
+        "name": "Socket_Ping_Pong_Binary_UDP_Data_Transfers_on_multiple_sockets",
+        "base": "examples/LARA-R6_Example10_SocketPingPong_MultipleUDP",
+        "files": [
+          "LARA-R6_Example10_SocketPingPong_MultipleUDP.ino"
+        ]
+      },
+      {
+        "name": "Clock",
+        "base": "examples/LARA-R6_Example11_Clock",
+        "files": [
+          "LARA-R6_Example11_Clock.ino"
+        ]
+      },
+      {
+        "name": "u-blox_AssistNow_Online",
+        "base": "examples/LARA-R6_Example12_AssistNowOnline",
+        "files": [
+          "LARA-R6_Example12_AssistNowOnline.ino",
+          "LARA-R6_AssistNow_Online.ino",
+          "secrets.h"
+        ]
+      },
+      {
+        "name": "Set_Clock_With_NTP",
+        "base": "examples/LARA-R6_Example13_SetClockWithNTP",
+        "files": [
+          "LARA-R6_Example13_SetClockWithNTP.ino",
+          "LARA-R6_NTP.ino"
+        ]
+      },
+      {
+        "name": "u-blox_AssistNow_Offline",
+        "base": "examples/LARA-R6_Example14_AssistNowOffline",
+        "files": [
+          "LARA-R6_Example14_AssistNowOffline.ino",
+          "LARA-R6_AssistNow_Offline.ino",
+          "LARA-R6_NTP.ino",
+          "secrets.h"
+        ]
+      },
+      {
+        "name": "u-blox_GNSS_NTRIP_Caster_Client",
+        "base": "examples/LARA-R6_Example15_GNSS_NTRIP_Caster_With_Callbacks",
+        "files": [
+          "LARA-R6_Example15_GNSS_NTRIP_Caster_With_Callbacks.ino",
+          "LARA-R6_Callbacks.ino",
+          "LARA-R6_NTRIP_Client.ino",
+          "GNSS_Callbacks.ino",
+          "secrets.h",
+          "Utils.ino"
+        ]
+      },
+      {
+        "name": "u-blox_GNSS_NTRIP_Caster_Client_Polling",
+        "base": "examples/LARA-R6_Example16_GNSS_NTRIP_Caster__Polling",
+        "files": [
+          "LARA-R6_Example16_GNSS_NTRIP_Caster__Polling.ino",
+          "LARA-R6_NTRIP_Client.ino",
+          "secrets.h"
+        ]
+      }
+    ],
+    "export": {
+      "exclude": [
+        ".gitattributes",
+        ".gitignore",
+        ".editorconfig",
+        ".codespellrc",
+        ".github/*",
+        "keywords.txt",
+        "SUPPORT.md",
+        "SECURITY.md",
+        "CONTRIBUTING.md",
+        "CODE_OF_CONDUCT.md"
+      ]
+    }
+  }

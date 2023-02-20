@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   Identification
@@ -8,7 +8,7 @@
   Written by: Paul Clark
   Date: November 18th 2020
 
-  This example demonstrates how to read the SARA's:
+  This example demonstrates how to read the LARA's:
     Manufacturer identification
     Model identification
     Firmware version identification
@@ -21,33 +21,33 @@
     SIM state
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
 // Map SIM states to more readable strings
 String simStateString[] =
@@ -61,9 +61,9 @@ String simStateString[] =
   "Operational"       // 6
 };
 
-// processSIMstate is provided to the SARA-R5 library via a 
+// processSIMstate is provided to the LARA-R6 library via a 
 // callback setter -- setSIMstateReadCallback. (See setup())
-void processSIMstate(SARA_R5_sim_states_t state)
+void processSIMstate(LARA_R6_sim_states_t state)
 {
   Serial.println();
   Serial.print(F("SIM state:           "));
@@ -76,7 +76,7 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
+  Serial.println(F("LARA-R6 Example"));
   Serial.println(F("Press any key to begin"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
@@ -84,44 +84,44 @@ void setup()
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 9600) )
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 9600) )
   {
-    Serial.println(F("SARA-R5 connected!"));
+    Serial.println(F("LARA-R6 connected!"));
   }
   else
   {
-    Serial.println(F("Unable to communicate with the SARA."));
-    Serial.println(F("Manually power-on (hold the SARA On button for 3 seconds) on and try again."));
+    Serial.println(F("Unable to communicate with the LARA."));
+    Serial.println(F("Manually power-on (hold the LARA On button for 3 seconds) on and try again."));
     while (1) ; // Loop forever on fail
   }
   Serial.println();
 
-  Serial.println("Manufacturer ID:     " + String(mySARA.getManufacturerID()));
-  Serial.println("Model ID:            " + String(mySARA.getModelID()));
-  Serial.println("Firmware Version:    " + String(mySARA.getFirmwareVersion()));
-  Serial.println("Product Serial No.:  " + String(mySARA.getSerialNo()));
-  Serial.println("IMEI:                " + String(mySARA.getIMEI()));
-  Serial.println("IMSI:                " + String(mySARA.getIMSI()));
-  Serial.println("SIM CCID:            " + String(mySARA.getCCID()));
-  Serial.println("Subscriber No.:      " + String(mySARA.getSubscriberNo()));
-  Serial.println("Capabilities:        " + String(mySARA.getCapabilities()));
+  Serial.println("Manufacturer ID:     " + String(myLARA.getManufacturerID()));
+  Serial.println("Model ID:            " + String(myLARA.getModelID()));
+  Serial.println("Firmware Version:    " + String(myLARA.getFirmwareVersion()));
+  Serial.println("Product Serial No.:  " + String(myLARA.getSerialNo()));
+  Serial.println("IMEI:                " + String(myLARA.getIMEI()));
+  Serial.println("IMSI:                " + String(myLARA.getIMSI()));
+  Serial.println("SIM CCID:            " + String(myLARA.getCCID()));
+  Serial.println("Subscriber No.:      " + String(myLARA.getSubscriberNo()));
+  Serial.println("Capabilities:        " + String(myLARA.getCapabilities()));
 
   // Set a callback to return the SIM state once requested
-  mySARA.setSIMstateReportCallback(&processSIMstate);
+  myLARA.setSIMstateReportCallback(&processSIMstate);
   // Now enable SIM state reporting for states 0 to 6 (by setting the reporting mode LSb)
-  if (mySARA.setSIMstateReportingMode(1) == SARA_R5_SUCCESS)
+  if (myLARA.setSIMstateReportingMode(1) == LARA_R6_SUCCESS)
     Serial.println("SIM state reports requested...");
   // You can disable the SIM staus reports again by calling assetTracker.setSIMstateReportingMode(0)
 }
 
 void loop()
 {
-  mySARA.poll(); // Keep processing data from the SARA so we can extract the SIM status
+  myLARA.poll(); // Keep processing data from the LARA so we can extract the SIM status
 }

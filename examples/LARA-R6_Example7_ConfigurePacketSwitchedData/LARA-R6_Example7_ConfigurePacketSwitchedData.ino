@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   Configure Packet Switched Data
@@ -8,7 +8,7 @@
   Written by: Paul Clark
   Date: November 18th 2020
 
-  This example demonstrates how to configure Packet Switched Data on the SARA-R5.
+  This example demonstrates how to configure Packet Switched Data on the LARA-R6.
 
   The earlier examples let you configure the network profile and select an operator.
   The default operator - defined in your SIM - will be allocated to "Context ID 1".
@@ -19,35 +19,35 @@
   take a guess that it is the default (IPv4v6). You can change this if required by editing the call to setPDPconfiguration.
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
-// processPSDAction is provided to the SARA-R5 library via a 
+// processPSDAction is provided to the LARA-R6 library via a 
 // callback setter -- setPSDActionCallback. (See setup())
 void processPSDAction(int result, IPAddress ip)
 {
@@ -74,7 +74,7 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
+  Serial.println(F("LARA-R6 Example"));
   Serial.println(F("Press any key to begin"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
@@ -82,48 +82,48 @@ void setup()
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 9600) )
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 9600) )
   {
-    Serial.println(F("SARA-R5 connected!"));
+    Serial.println(F("LARA-R6 connected!"));
   }
   else
   {
-    Serial.println(F("Unable to communicate with the SARA."));
-    Serial.println(F("Manually power-on (hold the SARA On button for 3 seconds) on and try again."));
+    Serial.println(F("Unable to communicate with the LARA."));
+    Serial.println(F("Manually power-on (hold the LARA On button for 3 seconds) on and try again."));
     while (1) ; // Loop forever on fail
   }
   Serial.println();
 
   // First check to see if we're connected to an operator:
-  if (mySARA.getOperator(&currentOperator) == SARA_R5_SUCCESS)
+  if (myLARA.getOperator(&currentOperator) == LARA_R6_SUCCESS)
   {
     Serial.print(F("Connected to: "));
     Serial.println(currentOperator);
   }
   else
   {
-    Serial.print(F("The SARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
+    Serial.print(F("The LARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
     while (1)
       ; // Do nothing more
   }
 
-  int minCID = SARA_R5_NUM_PDP_CONTEXT_IDENTIFIERS; // Keep a record of the highest and lowest CIDs
+  int minCID = LARA_R6_NUM_PDP_CONTEXT_IDENTIFIERS; // Keep a record of the highest and lowest CIDs
   int maxCID = 0;
 
   Serial.println(F("The available Context IDs are:"));
   Serial.println(F("Context ID:\tAPN Name:\tIP Address:"));
-  for (int cid = 0; cid < SARA_R5_NUM_PDP_CONTEXT_IDENTIFIERS; cid++)
+  for (int cid = 0; cid < LARA_R6_NUM_PDP_CONTEXT_IDENTIFIERS; cid++)
   {
     String apn = "";
     IPAddress ip(0, 0, 0, 0);
-    mySARA.getAPN(cid, &apn, &ip);
+    myLARA.getAPN(cid, &apn, &ip);
     if (apn.length() > 0)
     {
       Serial.print(cid);
@@ -170,13 +170,13 @@ void setup()
   }
 
   // Deactivate the profile
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_DEACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_DEACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("Warning: performPDPaction (deactivate profile) failed. Probably because no profile was active."));
   }
 
   // Map PSD profile 0 to the selected CID
-  if (mySARA.setPDPconfiguration(0, SARA_R5_PSD_CONFIG_PARAM_MAP_TO_CID, selection) != SARA_R5_SUCCESS)
+  if (myLARA.setPDPconfiguration(0, LARA_R6_PSD_CONFIG_PARAM_MAP_TO_CID, selection) != LARA_R6_SUCCESS)
   {
     Serial.println(F("setPDPconfiguration (map to CID) failed! Freezing..."));
     while (1)
@@ -184,7 +184,7 @@ void setup()
   }
 
   // Set the protocol type - this needs to match the defined IP type for the CID (as opposed to what was granted by the network)
-  if (mySARA.setPDPconfiguration(0, SARA_R5_PSD_CONFIG_PARAM_PROTOCOL, SARA_R5_PSD_PROTOCOL_IPV4V6_V4_PREF) != SARA_R5_SUCCESS)
+  if (myLARA.setPDPconfiguration(0, LARA_R6_PSD_CONFIG_PARAM_PROTOCOL, LARA_R6_PSD_PROTOCOL_IPV4V6_V4_PREF) != LARA_R6_SUCCESS)
   // You _may_ need to change the protocol type: ----------------------------------------^
   {
     Serial.println(F("setPDPconfiguration (set protocol type) failed! Freezing..."));
@@ -193,10 +193,10 @@ void setup()
   }
 
   // Set a callback to process the results of the PSD Action
-  mySARA.setPSDActionCallback(&processPSDAction);
+  myLARA.setPSDActionCallback(&processPSDAction);
 
   // Activate the profile
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_ACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_ACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (activate profile) failed! Freezing..."));
     while (1)
@@ -205,12 +205,12 @@ void setup()
 
   for (int i = 0; i < 100; i++) // Wait for up to a second for the PSD Action URC to arrive
   {
-    mySARA.poll(); // Keep processing data from the SARA so we can process the PSD Action
+    myLARA.poll(); // Keep processing data from the LARA so we can process the PSD Action
     delay(10);
   }
 
   // Save the profile to NVM - so we can load it again in the later examples
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_STORE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_STORE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (save to NVM) failed! Freezing..."));
     while (1)
@@ -221,5 +221,5 @@ void setup()
 
 void loop()
 {
-  mySARA.poll(); // Keep processing data from the SARA so we can process URCs from the PSD Action
+  myLARA.poll(); // Keep processing data from the LARA so we can process URCs from the PSD Action
 }

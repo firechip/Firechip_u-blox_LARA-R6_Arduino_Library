@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   Socket "Ping Pong" - TCP Data Transfers on multiple sockets
@@ -8,13 +8,13 @@
   Written by: Paul Clark
   Date: December 30th 2021
 
-  This example demonstrates how to transfer data from one SARA-R5 to another using multiple TCP sockets.
+  This example demonstrates how to transfer data from one LARA-R6 to another using multiple TCP sockets.
 
   The PDP profile is read from NVM. Please make sure you have run examples 4 & 7 previously to set up the profile.
   
   If you select "Ping":
-    The code asks for the IP Address of the "Pong" SARA-R5
-    The code then opens multiple TCP sockets to the "Pong" SARA-R5 using port number TCP_PORT_BASE, TCP_PORT_BASE + 1, etc.
+    The code asks for the IP Address of the "Pong" LARA-R6
+    The code then opens multiple TCP sockets to the "Pong" LARA-R6 using port number TCP_PORT_BASE, TCP_PORT_BASE + 1, etc.
     The code sends an initial "Ping" using Write Socket Data (+USOWR)
     The code polls continuously. When a +UUSORD URC message is received, data is read and passed to the socketReadCallback.
     When "Pong" is received by the callback, the code sends "Ping" in reply
@@ -27,11 +27,11 @@
     The socket is closed after 120 seconds
   Start the "Pong" first!
 
-  You may find that your service provider is blocking incoming TCP connections to the SARA-R5, preventing the "Pong" from working...
+  You may find that your service provider is blocking incoming TCP connections to the LARA-R6, preventing the "Pong" from working...
   If that is the case, you can use this code to play ping-pong with another computer acting as a TCP Echo Server.
   Here's a quick how-to (assuming you are familiar with Python):
     Open up a Python editor on your computer
-    Copy the Multi_TCP_Echo.py from the GitHub repo Utils folder: https://github.com/sparkfun/SparkFun_u-blox_SARA-R5_Arduino_Library/tree/main/Utils
+    Copy the Multi_TCP_Echo.py from the GitHub repo Utils folder: https://github.com/firechip/Firechip_u-blox_LARA-R6_Arduino_Library/tree/main/Utils
     Log in to your router
     Find your computer's local IP address (usually 192.168.0.something)
     Go into your router's Security / Port Forwarding settings:
@@ -55,39 +55,39 @@
       On 5 ports, that's 400 TCP transfers in total!  
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
-// Create a SARA_R5 object to use throughout the sketch
-// If you are using the LTE GNSS Breakout, and have access to the SARA's RESET_N pin, you can pass that to the library too
+// Create a LARA_R6 object to use throughout the sketch
+// If you are using the LTE GNSS Breakout, and have access to the LARA's RESET_N pin, you can pass that to the library too
 // allowing it to do an emergency shutdown if required.
 // Change the pin numbers if required.
-//SARA_R5 mySARA(34, 35); // PWR_ON, RESET_N
+//LARA_R6 myLARA(34, 35); // PWR_ON, RESET_N
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -110,7 +110,7 @@ volatile int socketNum[numConnections]; // Record the socket numbers. -1 indicat
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketListen is provided to the SARA-R5 library via a 
+// processSocketListen is provided to the LARA-R6 library via a 
 // callback setter -- setSocketListenCallback. (See setup())
 void processSocketListen(int listeningSocket, IPAddress localIP, unsigned int listeningPort, int socket, IPAddress remoteIP, unsigned int port)
 {
@@ -143,7 +143,7 @@ void processSocketListen(int listeningSocket, IPAddress localIP, unsigned int li
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketData is provided to the SARA-R5 library via a 
+// processSocketData is provided to the LARA-R6 library via a 
 // callback setter -- setSocketReadCallback. (See setup())
 void processSocketData(int socket, String theData)
 {
@@ -171,7 +171,7 @@ void processSocketData(int socket, String theData)
     if (pongCount[connection] < pingPongLimit)
     {
       const char pong[] = "Pong";
-      mySARA.socketWrite(socket, pong); // Send the "Pong"
+      myLARA.socketWrite(socket, pong); // Send the "Pong"
       pongCount[connection]++;
     }
   }
@@ -181,7 +181,7 @@ void processSocketData(int socket, String theData)
     if (pingCount[connection] < pingPongLimit)
     {
       const char ping[] = "Ping";
-      mySARA.socketWrite(socket, ping); // Send the "Ping"
+      myLARA.socketWrite(socket, ping); // Send the "Ping"
       pingCount[connection]++;
     }
   }
@@ -194,10 +194,10 @@ void processSocketData(int socket, String theData)
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketClose is provided to the SARA-R5 library via a 
+// processSocketClose is provided to the LARA-R6 library via a 
 // callback setter -- setSocketCloseCallback. (See setup())
 // 
-// Note: the SARA-R5 only sends a +UUSOCL URC when the socket os closed by the remote
+// Note: the LARA-R6 only sends a +UUSOCL URC when the socket os closed by the remote
 void processSocketClose(int socket)
 {
   Serial.println();
@@ -208,7 +208,7 @@ void processSocketClose(int socket)
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processPSDAction is provided to the SARA-R5 library via a 
+// processPSDAction is provided to the LARA-R6 library via a 
 // callback setter -- setPSDActionCallback. (See setup())
 void processPSDAction(int result, IPAddress ip)
 {
@@ -243,29 +243,29 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
-  Serial.println(F("Wait until the SARA's NI LED lights up - then press any key to begin"));
+  Serial.println(F("LARA-R6 Example"));
+  Serial.println(F("Wait until the LARA's NI LED lights up - then press any key to begin"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
     ;
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 115200) )
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 115200) )
   {
-    Serial.println(F("SARA-R5 connected!"));
+    Serial.println(F("LARA-R6 connected!"));
   }
   else
   {
-    Serial.println(F("Unable to communicate with the SARA."));
-    Serial.println(F("Manually power-on (hold the SARA On button for 3 seconds) on and try again."));
+    Serial.println(F("Unable to communicate with the LARA."));
+    Serial.println(F("Manually power-on (hold the LARA On button for 3 seconds) on and try again."));
     while (1) ; // Loop forever on fail
   }
   Serial.println();
@@ -273,26 +273,26 @@ void setup()
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // First check to see if we're connected to an operator:
-  if (mySARA.getOperator(&currentOperator) == SARA_R5_SUCCESS)
+  if (myLARA.getOperator(&currentOperator) == LARA_R6_SUCCESS)
   {
     Serial.print(F("Connected to: "));
     Serial.println(currentOperator);
   }
   else
   {
-    Serial.print(F("The SARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
+    Serial.print(F("The LARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
     while (1)
       ; // Do nothing more
   }
 
   // Deactivate the profile - in case one is already active
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_DEACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_DEACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("Warning: performPDPaction (deactivate profile) failed. Probably because no profile was active."));
   }
 
   // Load the profile from NVM - these were saved by a previous example
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_LOAD) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_LOAD) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (load from NVM) failed! Freezing..."));
     while (1)
@@ -300,10 +300,10 @@ void setup()
   }
 
   // Set a callback to process the results of the PSD Action - OPTIONAL
-  //mySARA.setPSDActionCallback(&processPSDAction);
+  //myLARA.setPSDActionCallback(&processPSDAction);
 
   // Activate the profile
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_ACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_ACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (activate profile) failed! Freezing..."));
     while (1)
@@ -312,13 +312,13 @@ void setup()
 
   //for (int i = 0; i < 100; i++) // Wait for up to a second for the PSD Action URC to arrive - OPTIONAL
   //{
-  //  mySARA.bufferedPoll(); // Keep processing data from the SARA so we can process the PSD Action
+  //  myLARA.bufferedPoll(); // Keep processing data from the LARA so we can process the PSD Action
   //  delay(10);
   //}
 
   //Print the dynamic IP Address (for profile 0)
   IPAddress myAddress;
-  mySARA.getNetworkAssignedIPAddress(0, &myAddress);
+  myLARA.getNetworkAssignedIPAddress(0, &myAddress);
   Serial.print(F("\r\nMy IP Address is: "));
   Serial.print(myAddress[0]);
   Serial.print(F("."));
@@ -331,19 +331,19 @@ void setup()
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // Set a callback to process the socket listen
-  mySARA.setSocketListenCallback(&processSocketListen);
+  myLARA.setSocketListenCallback(&processSocketListen);
   
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // Set a callback to process the socket data
-  mySARA.setSocketReadCallback(&processSocketData);
+  myLARA.setSocketReadCallback(&processSocketData);
   
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // Set a callback to process the socket close
   // 
-  // Note: the SARA-R5 only sends a +UUSOCL URC when the socket os closed by the remote
-  mySARA.setSocketCloseCallback(&processSocketClose);
+  // Note: the LARA-R6 only sends a +UUSOCL URC when the socket os closed by the remote
+  myLARA.setSocketCloseCallback(&processSocketClose);
   
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -437,12 +437,12 @@ void setup()
     for (int i = 0; i < numConnections; i++)
     {
   
-      socketNum[i] = mySARA.socketOpen(SARA_R5_TCP);
+      socketNum[i] = myLARA.socketOpen(LARA_R6_TCP);
       if (socketNum[i] == -1)
       {
         Serial.println(F("socketOpen failed! Freezing..."));
         while (1)
-          mySARA.bufferedPoll(); // Do nothing more except process any received data
+          myLARA.bufferedPoll(); // Do nothing more except process any received data
       }
   
       Serial.print(F("Connection "));
@@ -451,11 +451,11 @@ void setup()
       Serial.println(socketNum[i]);
 
       // Connect to the remote IP Address
-      if (mySARA.socketConnect(socketNum[i], theAddress, TCP_PORT_BASE + i) != SARA_R5_SUCCESS)
+      if (myLARA.socketConnect(socketNum[i], theAddress, TCP_PORT_BASE + i) != LARA_R6_SUCCESS)
       {
         Serial.println(F("socketConnect failed! Freezing..."));
         while (1)
-          mySARA.bufferedPoll(); // Do nothing more except process any received data
+          myLARA.bufferedPoll(); // Do nothing more except process any received data
       }
       else
       {
@@ -464,7 +464,7 @@ void setup()
   
       // Send the first ping to start the ping-pong
       const char ping[] = "Ping";
-      mySARA.socketWrite(socketNum[i], ping); // Send the "Ping"
+      myLARA.socketWrite(socketNum[i], ping); // Send the "Ping"
     }
         
   }
@@ -479,12 +479,12 @@ void setup()
     // Open the sockets
     for (int i = 0; i < numConnections; i++)
     {
-      socketNum[i] = mySARA.socketOpen(SARA_R5_TCP);
+      socketNum[i] = myLARA.socketOpen(LARA_R6_TCP);
       if (socketNum[i] == -1)
       {
         Serial.println(F("socketOpen failed! Freezing..."));
         while (1)
-          mySARA.bufferedPoll(); // Do nothing more except process any received data
+          myLARA.bufferedPoll(); // Do nothing more except process any received data
       }
   
       Serial.print(F("Connection "));
@@ -493,11 +493,11 @@ void setup()
       Serial.println(socketNum[i]);
 
       // Start listening for a connection
-      if (mySARA.socketListen(socketNum[i], TCP_PORT_BASE + i) != SARA_R5_SUCCESS)
+      if (myLARA.socketListen(socketNum[i], TCP_PORT_BASE + i) != LARA_R6_SUCCESS)
       {
         Serial.println(F("socketListen failed! Freezing..."));
         while (1)
-          mySARA.bufferedPoll(); // Do nothing more except process any received data
+          myLARA.bufferedPoll(); // Do nothing more except process any received data
       }
     }
   }
@@ -512,7 +512,7 @@ void setup()
 
 void loop()
 {
-  mySARA.bufferedPoll(); // Process the backlog (if any) and any fresh serial data
+  myLARA.bufferedPoll(); // Process the backlog (if any) and any fresh serial data
 
   for (int i = 0; i < numConnections; i++)
   {
@@ -523,7 +523,7 @@ void loop()
         printSocketParameters(socketNum[i]);
         
         //Comment the next line if you want the remote to close the sockets when they timeout
-        //mySARA.socketClose(socketNum[i]); // Close the socket
+        //myLARA.socketClose(socketNum[i]); // Close the socket
         
         socketNum[i] = -1;
       }
@@ -535,7 +535,7 @@ void loop()
       {
         printSocketParameters(socketNum[i]);
         
-        mySARA.socketClose(socketNum[i]); // Close the socket
+        myLARA.socketClose(socketNum[i]); // Close the socket
         
         socketNum[i] = -1;
       }
@@ -553,34 +553,34 @@ void printSocketParameters(int socket)
   Serial.println(socket);
   
   Serial.print(F("Socket type: "));
-  SARA_R5_socket_protocol_t socketType;
-  mySARA.querySocketType(socket, &socketType);
-  if (socketType == SARA_R5_TCP)
+  LARA_R6_socket_protocol_t socketType;
+  myLARA.querySocketType(socket, &socketType);
+  if (socketType == LARA_R6_TCP)
     Serial.println(F("TCP"));
-  else if (socketType == SARA_R5_UDP)
+  else if (socketType == LARA_R6_UDP)
     Serial.println(F("UDP"));
   else
     Serial.println(F("UNKNOWN! (Error!)"));
   
   Serial.print(F("Last error: "));
   int lastError;
-  mySARA.querySocketLastError(socket, &lastError);
+  myLARA.querySocketLastError(socket, &lastError);
   Serial.println(lastError);
   
   Serial.print(F("Total bytes sent: "));
   uint32_t bytesSent;
-  mySARA.querySocketTotalBytesSent(socket, &bytesSent);
+  myLARA.querySocketTotalBytesSent(socket, &bytesSent);
   Serial.println(bytesSent);
   
   Serial.print(F("Total bytes received: "));
   uint32_t bytesReceived;
-  mySARA.querySocketTotalBytesReceived(socket, &bytesReceived);
+  myLARA.querySocketTotalBytesReceived(socket, &bytesReceived);
   Serial.println(bytesReceived);
   
   Serial.print(F("Remote IP Address: "));
   IPAddress remoteAddress;
   int remotePort;
-  mySARA.querySocketRemoteIPAddress(socket, &remoteAddress, &remotePort);
+  myLARA.querySocketRemoteIPAddress(socket, &remoteAddress, &remotePort);
   Serial.print(remoteAddress[0]);
   Serial.print(F("."));
   Serial.print(remoteAddress[1]);
@@ -590,35 +590,35 @@ void printSocketParameters(int socket)
   Serial.println(remoteAddress[3]);
 
   Serial.print(F("Socket status (TCP sockets only): "));
-  SARA_R5_tcp_socket_status_t socketStatus;
-  mySARA.querySocketStatusTCP(socket, &socketStatus);
-  if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_INACTIVE)
+  LARA_R6_tcp_socket_status_t socketStatus;
+  myLARA.querySocketStatusTCP(socket, &socketStatus);
+  if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_INACTIVE)
     Serial.println(F("INACTIVE"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_LISTEN)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_LISTEN)
     Serial.println(F("LISTEN"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_SYN_SENT)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_SYN_SENT)
     Serial.println(F("SYN_SENT"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_SYN_RCVD)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_SYN_RCVD)
     Serial.println(F("SYN_RCVD"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_ESTABLISHED)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_ESTABLISHED)
     Serial.println(F("ESTABLISHED"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_FIN_WAIT_1)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_FIN_WAIT_1)
     Serial.println(F("FIN_WAIT_1"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_FIN_WAIT_2)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_FIN_WAIT_2)
     Serial.println(F("FIN_WAIT_2"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_CLOSE_WAIT)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_CLOSE_WAIT)
     Serial.println(F("CLOSE_WAIT"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_CLOSING)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_CLOSING)
     Serial.println(F("CLOSING"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_LAST_ACK)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_LAST_ACK)
     Serial.println(F("LAST_ACK"));
-  else if (socketStatus == SARA_R5_TCP_SOCKET_STATUS_TIME_WAIT)
+  else if (socketStatus == LARA_R6_TCP_SOCKET_STATUS_TIME_WAIT)
     Serial.println(F("TIME_WAIT"));
   else
     Serial.println(F("UNKNOWN! (Error!)"));
       
   Serial.print(F("Unacknowledged outgoing bytes: "));
   uint32_t bytesUnack;
-  mySARA.querySocketOutUnackData(socket, &bytesUnack);
+  myLARA.querySocketOutUnackData(socket, &bytesUnack);
   Serial.println(bytesUnack);
 }

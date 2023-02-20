@@ -1,6 +1,6 @@
 /*
 
-  SARA-R5 Example
+  LARA-R6 Example
   ===============
 
   Socket "Ping Pong" - Binary UDP Data Transfers on multiple sockets
@@ -8,7 +8,7 @@
   Written by: Paul Clark
   Date: December 30th 2021
 
-  This example demonstrates how to ping-pong binary data from a SARA-R5 to UDP Echo Server using multiple UDP sockets.
+  This example demonstrates how to ping-pong binary data from a LARA-R6 to UDP Echo Server using multiple UDP sockets.
 
   The PDP profile is read from NVM. Please make sure you have run examples 4 & 7 previously to set up the profile.
   
@@ -23,7 +23,7 @@
   This example needs an external UDP Echo Server. E.g. Python running on your home computer.
   Here's a quick how-to (assuming you are familiar with Python):
     Open up a Python editor on your computer
-    Copy the Multi_UDP_Echo.py from the GitHub repo Utils folder: https://github.com/sparkfun/SparkFun_u-blox_SARA-R5_Arduino_Library/tree/main/Utils
+    Copy the Multi_UDP_Echo.py from the GitHub repo Utils folder: https://github.com/firechip/Firechip_u-blox_LARA-R6_Arduino_Library/tree/main/Utils
     Log in to your router
     Find your computer's local IP address (usually 192.168.0.something)
     Go into your router's Security / Port Forwarding settings:
@@ -47,39 +47,39 @@
       On 5 ports, that's 400 UDP transfers in total!
 
   Feel like supporting open source hardware?
-  Buy a board from SparkFun!
+  Buy a board from firechip!
 
   Licence: MIT
   Please see LICENSE.md for full details
 
 */
 
-#include <SparkFun_u-blox_SARA-R5_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#SparkFun_u-blox_SARA-R5_Arduino_Library
+#include <Firechip_u-blox_LARA-R6_Arduino_Library.h> //Click here to get the library: http://librarymanager/All#Firechip_u-blox_LARA-R6_Arduino_Library
 
-// Uncomment the next line to connect to the SARA-R5 using hardware Serial1
-#define saraSerial Serial1
+// Uncomment the next line to connect to the LARA-R6 using hardware Serial1
+#define laraSerial Serial1
 
-// Uncomment the next line to create a SoftwareSerial object to pass to the SARA-R5 library instead
-//SoftwareSerial saraSerial(8, 9);
+// Uncomment the next line to create a SoftwareSerial object to pass to the LARA-R6 library instead
+//SoftwareSerial laraSerial(8, 9);
 
-// Create a SARA_R5 object to use throughout the sketch
-// Usually we would tell the library which GPIO pin to use to control the SARA power (see below),
-// but we can start the SARA without a power pin. It just means we need to manually 
+// Create a LARA_R6 object to use throughout the sketch
+// Usually we would tell the library which GPIO pin to use to control the LARA power (see below),
+// but we can start the LARA without a power pin. It just means we need to manually 
 // turn the power on if required! ;-D
-SARA_R5 mySARA;
+LARA_R6 myLARA;
 
-// Create a SARA_R5 object to use throughout the sketch
-// We need to tell the library what GPIO pin is connected to the SARA power pin.
+// Create a LARA_R6 object to use throughout the sketch
+// We need to tell the library what GPIO pin is connected to the LARA power pin.
 // If you're using the MicroMod Asset Tracker and the MicroMod Artemis Processor Board,
 // the pin name is G2 which is connected to pin AD34.
 // Change the pin number if required.
-//SARA_R5 mySARA(34);
+//LARA_R6 myLARA(34);
 
-// Create a SARA_R5 object to use throughout the sketch
-// If you are using the LTE GNSS Breakout, and have access to the SARA's RESET_N pin, you can pass that to the library too
+// Create a LARA_R6 object to use throughout the sketch
+// If you are using the LTE GNSS Breakout, and have access to the LARA's RESET_N pin, you can pass that to the library too
 // allowing it to do an emergency shutdown if required.
 // Change the pin numbers if required.
-//SARA_R5 mySARA(34, 35); // PWR_ON, RESET_N
+//LARA_R6 myLARA(34, 35); // PWR_ON, RESET_N
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -100,7 +100,7 @@ volatile int socketNum[numConnections]; // Record the socket numbers. -1 indicat
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketData is provided to the SARA-R5 library via a 
+// processSocketData is provided to the LARA-R6 library via a 
 // callback setter -- setSocketReadCallbackPlus. (See setup())
 void processSocketData(int socket, const char *theData, int length, IPAddress remoteAddress, int remotePort)
 {
@@ -145,7 +145,7 @@ void processSocketData(int socket, const char *theData, int length, IPAddress re
     if (pongCount[connection] < pingPongLimit)
     {
       const char pong[] = { 0x04, 0x05, 0x06, 0x07 };
-      mySARA.socketWriteUDP(socket, remoteAddress, remotePort, pong, 4); // Send the "Pong"
+      myLARA.socketWriteUDP(socket, remoteAddress, remotePort, pong, 4); // Send the "Pong"
       pongCount[connection]++;
     }
   }
@@ -156,7 +156,7 @@ void processSocketData(int socket, const char *theData, int length, IPAddress re
     {
       // Use the const char * version for binary data
       const char ping[] = { 0x00, 0x01, 0x02, 0x03 };
-      mySARA.socketWriteUDP(socket, remoteAddress, remotePort, ping, 4); // Send the "Ping"
+      myLARA.socketWriteUDP(socket, remoteAddress, remotePort, ping, 4); // Send the "Ping"
   
       pingCount[connection]++;
     }
@@ -170,10 +170,10 @@ void processSocketData(int socket, const char *theData, int length, IPAddress re
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processSocketClose is provided to the SARA-R5 library via a 
+// processSocketClose is provided to the LARA-R6 library via a 
 // callback setter -- setSocketCloseCallback. (See setup())
 // 
-// Note: the SARA-R5 only sends a +UUSOCL URC when the socket os closed by the remote
+// Note: the LARA-R6 only sends a +UUSOCL URC when the socket os closed by the remote
 void processSocketClose(int socket)
 {
   Serial.println();
@@ -184,7 +184,7 @@ void processSocketClose(int socket)
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// processPSDAction is provided to the SARA-R5 library via a 
+// processPSDAction is provided to the LARA-R6 library via a 
 // callback setter -- setPSDActionCallback. (See setup())
 void processPSDAction(int result, IPAddress ip)
 {
@@ -219,29 +219,29 @@ void setup()
   Serial.begin(115200); // Start the serial console
 
   // Wait for user to press key to begin
-  Serial.println(F("SARA-R5 Example"));
-  Serial.println(F("Wait until the SARA's NI LED lights up - then press any key to begin"));
+  Serial.println(F("LARA-R6 Example"));
+  Serial.println(F("Wait until the LARA's NI LED lights up - then press any key to begin"));
   
   while (!Serial.available()) // Wait for the user to press a key (send any serial character)
     ;
   while (Serial.available()) // Empty the serial RX buffer
     Serial.read();
 
-  //mySARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //myLARA.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // For the MicroMod Asset Tracker, we need to invert the power pin so it pulls high instead of low
   // Comment the next line if required
-  mySARA.invertPowerPin(true); 
+  myLARA.invertPowerPin(true); 
 
-  // Initialize the SARA
-  if (mySARA.begin(saraSerial, 115200) )
+  // Initialize the LARA
+  if (myLARA.begin(laraSerial, 115200) )
   {
-    Serial.println(F("SARA-R5 connected!"));
+    Serial.println(F("LARA-R6 connected!"));
   }
   else
   {
-    Serial.println(F("Unable to communicate with the SARA."));
-    Serial.println(F("Manually power-on (hold the SARA On button for 3 seconds) on and try again."));
+    Serial.println(F("Unable to communicate with the LARA."));
+    Serial.println(F("Manually power-on (hold the LARA On button for 3 seconds) on and try again."));
     while (1) ; // Loop forever on fail
   }
   Serial.println();
@@ -249,26 +249,26 @@ void setup()
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // First check to see if we're connected to an operator:
-  if (mySARA.getOperator(&currentOperator) == SARA_R5_SUCCESS)
+  if (myLARA.getOperator(&currentOperator) == LARA_R6_SUCCESS)
   {
     Serial.print(F("Connected to: "));
     Serial.println(currentOperator);
   }
   else
   {
-    Serial.print(F("The SARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
+    Serial.print(F("The LARA is not yet connected to an operator. Please use the previous examples to connect. Or wait and retry. Freezing..."));
     while (1)
       ; // Do nothing more
   }
 
   // Deactivate the profile - in case one is already active
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_DEACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_DEACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("Warning: performPDPaction (deactivate profile) failed. Probably because no profile was active."));
   }
 
   // Load the profile from NVM - these were saved by a previous example
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_LOAD) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_LOAD) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (load from NVM) failed! Freezing..."));
     while (1)
@@ -276,10 +276,10 @@ void setup()
   }
 
   // Set a callback to process the results of the PSD Action - OPTIONAL
-  //mySARA.setPSDActionCallback(&processPSDAction);
+  //myLARA.setPSDActionCallback(&processPSDAction);
 
   // Activate the profile
-  if (mySARA.performPDPaction(0, SARA_R5_PSD_ACTION_ACTIVATE) != SARA_R5_SUCCESS)
+  if (myLARA.performPDPaction(0, LARA_R6_PSD_ACTION_ACTIVATE) != LARA_R6_SUCCESS)
   {
     Serial.println(F("performPDPaction (activate profile) failed! Freezing..."));
     while (1)
@@ -288,13 +288,13 @@ void setup()
 
   //for (int i = 0; i < 100; i++) // Wait for up to a second for the PSD Action URC to arrive - OPTIONAL
   //{
-  //  mySARA.bufferedPoll(); // Keep processing data from the SARA so we can process the PSD Action
+  //  myLARA.bufferedPoll(); // Keep processing data from the LARA so we can process the PSD Action
   //  delay(10);
   //}
 
   //Print the dynamic IP Address (for profile 0)
   IPAddress myAddress;
-  mySARA.getNetworkAssignedIPAddress(0, &myAddress);
+  myLARA.getNetworkAssignedIPAddress(0, &myAddress);
   Serial.print(F("\r\nMy IP Address is: "));
   Serial.print(myAddress[0]);
   Serial.print(F("."));
@@ -307,12 +307,12 @@ void setup()
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // Set a callback to process the socket data
-  mySARA.setSocketReadCallbackPlus(&processSocketData);
+  myLARA.setSocketReadCallbackPlus(&processSocketData);
   
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   // Set a callback to process the socket close
-  mySARA.setSocketCloseCallback(&processSocketClose);
+  myLARA.setSocketCloseCallback(&processSocketClose);
   
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -366,12 +366,12 @@ void setup()
   for (int i = 0; i < numConnections; i++)
   {
   
-    socketNum[i] = mySARA.socketOpen(SARA_R5_UDP);
+    socketNum[i] = myLARA.socketOpen(LARA_R6_UDP);
     if (socketNum[i] == -1)
     {
       Serial.println(F("socketOpen failed! Freezing..."));
       while (1)
-        mySARA.bufferedPoll(); // Do nothing more except process any received data
+        myLARA.bufferedPoll(); // Do nothing more except process any received data
     }
 
     Serial.print(F("Connection "));
@@ -381,7 +381,7 @@ void setup()
 
     // Send the first ping to start the ping-pong
     const char ping[] = { 0x00, 0x01, 0x02, 0x03 };
-    mySARA.socketWriteUDP(socketNum[i], theAddress, UDP_PORT_BASE + i, ping, 4); // Send the "Ping"
+    myLARA.socketWriteUDP(socketNum[i], theAddress, UDP_PORT_BASE + i, ping, 4); // Send the "Ping"
   }
     
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -394,7 +394,7 @@ void setup()
 
 void loop()
 {
-  mySARA.bufferedPoll(); // Process the backlog (if any) and any fresh serial data
+  myLARA.bufferedPoll(); // Process the backlog (if any) and any fresh serial data
 
   for (int i = 0; i < numConnections; i++)
   {
@@ -403,7 +403,7 @@ void loop()
       printSocketParameters(socketNum[i]);
       Serial.print(F("\r\nClosing socket "));
       Serial.println(socketNum[i]);
-      mySARA.socketClose(socketNum[i]); // Close the socket
+      myLARA.socketClose(socketNum[i]); // Close the socket
       socketNum[i] = -1;
     }
   }
@@ -419,22 +419,22 @@ void printSocketParameters(int socket)
   Serial.println(socket);
   
   Serial.print(F("Socket type: "));
-  SARA_R5_socket_protocol_t socketType;
-  mySARA.querySocketType(socket, &socketType);
-  if (socketType == SARA_R5_TCP)
+  LARA_R6_socket_protocol_t socketType;
+  myLARA.querySocketType(socket, &socketType);
+  if (socketType == LARA_R6_TCP)
     Serial.println(F("TCP"));
-  else if (socketType == SARA_R5_UDP)
+  else if (socketType == LARA_R6_UDP)
     Serial.println(F("UDP"));
   else
     Serial.println(F("UNKNOWN! (Error!)"));
   
   Serial.print(F("Total bytes sent: "));
   uint32_t bytesSent;
-  mySARA.querySocketTotalBytesSent(socket, &bytesSent);
+  myLARA.querySocketTotalBytesSent(socket, &bytesSent);
   Serial.println(bytesSent);
   
   Serial.print(F("Total bytes received: "));
   uint32_t bytesReceived;
-  mySARA.querySocketTotalBytesReceived(socket, &bytesReceived);
+  myLARA.querySocketTotalBytesReceived(socket, &bytesReceived);
   Serial.println(bytesReceived);
 }

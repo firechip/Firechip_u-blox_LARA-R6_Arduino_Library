@@ -25,7 +25,7 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
 
   Serial.println(F("beginClient: Opening TCP socket"));
 
-  *theSocket = mySARA.socketOpen(SARA_R5_TCP);
+  *theSocket = myLARA.socketOpen(LARA_R6_TCP);
   if (*theSocket == -1)
   {
     Serial.println(F("beginClient: socketOpen failed!"));
@@ -40,7 +40,7 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
   Serial.print(F(" on port "));
   Serial.println(casterPort);
 
-  if (mySARA.socketConnect(*theSocket, casterHost, casterPort) != SARA_R5_SUCCESS)
+  if (myLARA.socketConnect(*theSocket, casterHost, casterPort) != LARA_R6_SUCCESS)
   {
     Serial.println(F("beginClient: socketConnect failed!"));
   }
@@ -60,7 +60,7 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
     memset(serverRequest, 0, SERVER_BUFFER_SIZE);
     snprintf(serverRequest,
              SERVER_BUFFER_SIZE,
-             "GET /%s HTTP/1.0\r\nUser-Agent: NTRIP SparkFun u-blox Client v1.0\r\n",
+             "GET /%s HTTP/1.0\r\nUser-Agent: NTRIP firechip u-blox Client v1.0\r\n",
              mountPoint);
 
     // Set up the credentials
@@ -123,14 +123,14 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
     Serial.println(F("beginClient: Sending server request: "));
     Serial.println(serverRequest);
 
-    mySARA.socketWrite(*theSocket, (const char *)serverRequest);
+    myLARA.socketWrite(*theSocket, (const char *)serverRequest);
 
     //Wait up to 5 seconds for response. Poll the number of available bytes. Don't use the callback yet.
     unsigned long startTime = millis();
     int availableLength = 0;
     while (availableLength == 0)
     {
-      mySARA.socketReadAvailable(*theSocket, &availableLength);
+      myLARA.socketReadAvailable(*theSocket, &availableLength);
       if (millis() > (startTime + 5000))
       {
         Serial.println(F("beginClient: Caster timed out!"));
@@ -156,7 +156,7 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
       if ((responseSpot + availableLength) >= ((512 * 4) - 1)) // Exit the loop if we get too much data
         break;
 
-      mySARA.socketRead(*theSocket, availableLength, &response[responseSpot]);
+      myLARA.socketRead(*theSocket, availableLength, &response[responseSpot]);
       responseSpot += availableLength;
 
       //Serial.print(F("beginClient: response is: "));
@@ -176,7 +176,7 @@ bool beginClient(int *theSocket, bool *connectionIsOpen)
         }
       }
 
-      mySARA.socketReadAvailable(*theSocket, &availableLength); // Update availableLength
+      myLARA.socketReadAvailable(*theSocket, &availableLength); // Update availableLength
 
       Serial.print(F("beginClient: socket now has "));
       Serial.print(availableLength);
@@ -244,7 +244,7 @@ void closeConnection(int *theSocket, bool *connectionIsOpen)
   // Check the socket is actually open, otherwise we'll get an error when we try to close it
   if (*theSocket >= 0)
   {
-    mySARA.socketClose(*theSocket);
+    myLARA.socketClose(*theSocket);
     Serial.println(F("closeConnection: Connection closed!"));
   }
   else

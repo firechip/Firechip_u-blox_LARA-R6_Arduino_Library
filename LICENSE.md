@@ -1,12 +1,12 @@
-SparkFun License Information
+Firechip License Information
 ============================
 
-SparkFun uses two different licenses for our files — one for hardware and one for code.
+Firechip uses two different licenses for our files — one for hardware and one for code.
 
 Hardware
 ---------
 
-**SparkFun hardware is released under [Creative Commons Share-alike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/).**
+**Firechip hardware is released under [Creative Commons Share-alike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/).**
 
 Note: This is a human-readable summary of (and not a substitute for) the [license](http://creativecommons.org/licenses/by-sa/4.0/legalcode).
 
@@ -30,10 +30,11 @@ No warranties are given. The license may not give you all of the permissions nec
 Code
 --------
 
-**SparkFun code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).**
+**Firechip code, firmware, and software is released under the MIT License(http://opensource.org/licenses/MIT).**
 
 The MIT License (MIT)
 
+Copyright (c) 2023 Firechip
 Copyright (c) 2020 SparkFun Electronics
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
